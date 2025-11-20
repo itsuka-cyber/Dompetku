@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useFinance } from '../context/FinanceContext';
+import { useToast } from '../context/ToastContext';
 import { Plus, Trash2 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const Goals = () => {
   const { state, dispatch, formatRupiah } = useFinance();
+  const { showToast } = useToast();
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');
   const [target, setTarget] = useState('');
@@ -23,6 +25,7 @@ const Goals = () => {
               color: `#${Math.floor(Math.random()*16777215).toString(16)}` // Random hex
           }
       });
+      showToast('Target keuangan berhasil dibuat!', 'success');
       setIsAdding(false);
       setName('');
       setTarget('');
@@ -32,6 +35,7 @@ const Goals = () => {
   const handleDelete = (id: string) => {
       if(window.confirm("Hapus goal ini?")) {
           dispatch({ type: 'DELETE_GOAL', payload: id });
+          showToast('Target dihapus.', 'info');
       }
   }
 
@@ -51,10 +55,30 @@ const Goals = () => {
           <form onSubmit={handleAdd} className="bg-white dark:bg-slate-900 p-4 rounded-xl mb-6 animate-in fade-in slide-in-from-top-4 shadow-sm">
               <h3 className="font-semibold mb-4 dark:text-white">Buat Goal Baru</h3>
               <div className="space-y-3">
-                  <input type="text" placeholder="Nama Goal (mis: Beli HP)" className="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white" value={name} onChange={e=>setName(e.target.value)} required/>
-                  <input type="number" placeholder="Target (Rp)" className="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white" value={target} onChange={e=>setTarget(e.target.value)} required/>
-                  <input type="date" className="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-700 dark:text-white" value={deadline} onChange={e=>setDeadline(e.target.value)} required/>
-                  <button type="submit" className="w-full bg-primary text-white py-2 rounded-lg font-medium">Simpan Goal</button>
+                  <input 
+                    type="text" 
+                    placeholder="Nama Goal (mis: Beli HP)" 
+                    className="w-full p-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary outline-none" 
+                    value={name} 
+                    onChange={e=>setName(e.target.value)} 
+                    required
+                  />
+                  <input 
+                    type="number" 
+                    placeholder="Target (Rp)" 
+                    className="w-full p-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary outline-none" 
+                    value={target} 
+                    onChange={e=>setTarget(e.target.value)} 
+                    required
+                  />
+                  <input 
+                    type="date" 
+                    className="w-full p-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary outline-none" 
+                    value={deadline} 
+                    onChange={e=>setDeadline(e.target.value)} 
+                    required
+                  />
+                  <button type="submit" className="w-full bg-primary text-white py-3 rounded-lg font-bold shadow-lg shadow-primary/30">Simpan Goal</button>
               </div>
           </form>
       )}
@@ -97,6 +121,7 @@ const Goals = () => {
                                 onClick={() => {
                                     const updated = {...goal, savedAmount: goal.savedAmount + 50000};
                                     dispatch({type: 'UPDATE_GOAL', payload: updated});
+                                    showToast('Ditambahkan Rp 50.000', 'success');
                                 }}
                                 className="text-[10px] bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded text-primary font-medium"
                             >
@@ -106,6 +131,7 @@ const Goals = () => {
                                 onClick={() => {
                                     const updated = {...goal, savedAmount: goal.savedAmount + 100000};
                                     dispatch({type: 'UPDATE_GOAL', payload: updated});
+                                    showToast('Ditambahkan Rp 100.000', 'success');
                                 }}
                                 className="text-[10px] bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded text-primary font-medium"
                             >

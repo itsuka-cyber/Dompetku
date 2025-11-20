@@ -1,9 +1,11 @@
 import React from 'react';
 import { useFinance } from '../context/FinanceContext';
-import { Moon, Sun, Download, Upload, Database, Trash2, ShieldCheck } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { Moon, Sun, Download, Upload, Trash2, ShieldCheck } from 'lucide-react';
 
 const Settings = () => {
   const { state, dispatch } = useFinance();
+  const { showToast } = useToast();
 
   const handleBackup = () => {
     const dataStr = JSON.stringify(state);
@@ -19,6 +21,7 @@ const Settings = () => {
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
+    showToast('Backup berhasil diunduh!', 'success');
   };
 
   const handleRestore = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,14 +38,14 @@ const Settings = () => {
                           const parsedState = JSON.parse(decoded);
                           if(confirm("Data saat ini akan ditimpa. Lanjutkan?")) {
                               dispatch({ type: 'RESTORE_DATA', payload: parsedState });
-                              alert("Data berhasil dipulihkan!");
+                              showToast('Data berhasil dipulihkan!', 'success');
                           }
                       } else {
-                          alert("Format file tidak valid.");
+                          showToast('Format file tidak valid.', 'error');
                       }
                   }
               } catch(err) {
-                  alert("Gagal membaca file backup.");
+                  showToast('Gagal membaca file backup.', 'error');
               }
           }
       }
@@ -51,7 +54,8 @@ const Settings = () => {
   const handleReset = () => {
       if(confirm("Yakin ingin menghapus SEMUA data? Aksi ini tidak bisa dibatalkan.")) {
           localStorage.clear();
-          window.location.reload();
+          showToast('Aplikasi direset.', 'info');
+          setTimeout(() => window.location.reload(), 1000);
       }
   }
 

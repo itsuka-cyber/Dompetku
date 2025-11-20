@@ -1,24 +1,38 @@
 {
-  "name": "dompetku",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "dompetku-web",
+  "version": "1.0.0",
+  "description": "Aplikasi manajemen keuangan offline dengan React dan Tailwind",
+  "main": "index.tsx",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "lucide-react": "^0.554.0",
-    "recharts": "^3.4.1",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6"
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "recharts": "^2.12.3",
+    "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

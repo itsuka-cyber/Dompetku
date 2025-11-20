@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useFinance, getCategoryIcon } from '../context/FinanceContext';
+import { useToast } from '../context/ToastContext';
 import { ArrowUpCircle, ArrowDownCircle, Wallet, PiggyBank, Plus, ArrowRight, MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const Dashboard = () => {
   const { state, formatRupiah, dispatch } = useFinance();
+  const { showToast } = useToast();
   const [transferAmount, setTransferAmount] = useState('');
   const [showTransfer, setShowTransfer] = useState(false);
 
@@ -33,6 +35,7 @@ const Dashboard = () => {
     if(!transferAmount) return;
     const amount = parseInt(transferAmount);
     dispatch({ type: 'TRANSFER_TO_SAVINGS', payload: amount });
+    showToast(amount > 0 ? 'Berhasil ditabung!' : 'Penarikan berhasil!', 'success');
     setTransferAmount('');
     setShowTransfer(false);
   };

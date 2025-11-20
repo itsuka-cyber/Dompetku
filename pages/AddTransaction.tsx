@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFinance, getCategoryIcon, iconMap } from '../context/FinanceContext';
+import { useToast } from '../context/ToastContext';
 import { Category } from '../types';
 import { ChevronLeft, Calendar, FileText, Plus, X } from 'lucide-react';
 
 const AddTransaction = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useFinance();
+  const { showToast } = useToast();
   
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
@@ -35,6 +37,7 @@ const AddTransaction = () => {
     };
 
     dispatch({ type: 'ADD_TRANSACTION', payload: newTransaction });
+    showToast('Transaksi berhasil disimpan', 'success');
     navigate('/');
   };
 
@@ -56,6 +59,7 @@ const AddTransaction = () => {
       setShowCatModal(false);
       setNewCatName('');
       setNewCatIcon('Circle');
+      showToast('Kategori berhasil dibuat', 'success');
   };
 
   return (

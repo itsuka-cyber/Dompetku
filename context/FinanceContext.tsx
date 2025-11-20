@@ -122,7 +122,7 @@ const STORAGE_KEY = 'dompetku_offline_data_v1';
 
 export const FinanceProvider = ({ children }: { children?: ReactNode }) => {
   // Initialize from localStorage if available
-  const init = (): AppState => {
+  const init = (_?: any): AppState => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
@@ -134,7 +134,8 @@ export const FinanceProvider = ({ children }: { children?: ReactNode }) => {
     return initialState;
   };
 
-  const [state, dispatch] = useReducer(financeReducer, null, init);
+  // Pass undefined as second argument so init is called with undefined
+  const [state, dispatch] = useReducer(financeReducer, undefined, init);
 
   // Persist to localStorage on every change
   useEffect(() => {

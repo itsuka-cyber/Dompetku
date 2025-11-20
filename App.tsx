@@ -1,6 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { FinanceProvider, useFinance } from './context/FinanceContext';
+import { ToastProvider } from './context/ToastContext';
 import BottomNav from './components/BottomNav';
 import Dashboard from './pages/Dashboard';
 import AddTransaction from './pages/AddTransaction';
@@ -9,6 +10,7 @@ import Goals from './pages/Goals';
 import Settings from './pages/Settings';
 import Onboarding from './pages/Onboarding';
 import Transactions from './pages/Transactions';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { state } = useFinance();
@@ -36,6 +38,7 @@ const AppContent = () => {
           <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
         </Routes>
         {!hideNav && state.isOnboarded && <BottomNav />}
+        <PWAInstallPrompt />
       </div>
     </div>
   );
@@ -44,9 +47,11 @@ const AppContent = () => {
 const App = () => {
   return (
     <FinanceProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <ToastProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ToastProvider>
     </FinanceProvider>
   );
 };
