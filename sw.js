@@ -3,9 +3,9 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/wallet-icon.png',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-  'https://cdn-icons-png.flaticon.com/512/1077/1077114.png'
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
 // Install Service Worker
