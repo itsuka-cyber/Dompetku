@@ -54,5 +54,5 @@ export type AppAction =
   | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'RESTORE_DATA'; payload: AppState }
   | { type: 'TRANSFER_TO_SAVINGS'; payload: number } // Positive to savings, negative from savings
-  | { type: 'SET_BUDGET'; payload: number }
+  | { type: 'SET_BUDGET'; payload: Budget }
   | { type: 'ADD_CATEGORY'; payload: Category };

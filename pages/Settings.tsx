@@ -1,20 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { useToast } from '../context/ToastContext';
-import { Moon, Sun, Download, Upload, Trash2, ShieldCheck } from 'lucide-react';
+import { Moon, Sun, Download, Upload, Trash2, ShieldCheck, Wallet, Check } from 'lucide-react';
 
 const Settings = () => {
   const { state, dispatch } = useFinance();
   const { showToast } = useToast();
 
+  // Local state for budget editing
+  const [budgetLimit, setBudgetLimit] = useState(state.budget.limit.toString());
+  const [budgetEnabled, setBudgetEnabled] = useState(state.budget.enabled);
+
+  useEffect(() => {
+      setBudgetLimit(state.budget.limit.toString());
+      setBudgetEnabled(state.budget.enabled);
+  }, [state.budget]);
+
+  const handleSaveBudget = (e: React.FormEvent) => {
+      e.preventDefault();
+      dispatch({
+          type: 'SET_BUDGET',
+          payload: {
+              limit: parseInt(budgetLimit) || 0,
+              enabled: budgetEnabled
+          }
+      });
+      showToast('Pengaturan budget disimpan!', 'success');
+  };
+
   const handleBackup = () => {
     const dataStr = JSON.stringify(state);
-    // Simple XOR encryption logic (Not military grade, but satisfies "encrypted" for basic local storage)
-    // In production, use a library like crypto-js. For this demo, we simulate encoding.
     const encoded = btoa(encodeURIComponent(dataStr));
-    
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify({ data: encoded, v: 1 }));
-    
     const exportFileDefaultName = `dompetku_backup_${new Date().toISOString().split('T')[0]}.json`;
     
     const linkElement = document.createElement('a');
@@ -33,7 +50,6 @@ const Settings = () => {
                   if(event.target?.result) {
                       const json = JSON.parse(event.target.result as string);
                       if(json.data) {
-                          // Decode
                           const decoded = decodeURIComponent(atob(json.data));
                           const parsedState = JSON.parse(decoded);
                           if(confirm("Data saat ini akan ditimpa. Lanjutkan?")) {
@@ -64,6 +80,51 @@ const Settings = () => {
       <h1 className="text-2xl font-bold mb-8 dark:text-white">Pengaturan</h1>
 
       <div className="space-y-4">
+          {/* Budget Settings */}
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm">
+             <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-orange-100 dark:bg-slate-800 rounded-lg text-orange-600">
+                      <Wallet size={20} />
+                  </div>
+                  <div>
+                      <h3 className="font-medium dark:text-white">Limit Pengeluaran</h3>
+                      <p className="text-xs text-gray-500">Atur batas budget bulanan</p>
+                  </div>
+             </div>
+             
+             <form onSubmit={handleSaveBudget} className="space-y-3">
+                 <div className="flex items-center justify-between bg-gray-50 dark:bg-slate-800 p-3 rounded-lg">
+                     <span className="text-sm font-medium dark:text-slate-300">Aktifkan Budget</span>
+                     <button 
+                        type="button"
+                        onClick={() => setBudgetEnabled(!budgetEnabled)}
+                        className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${budgetEnabled ? 'bg-primary' : 'bg-gray-300'}`}
+                     >
+                        <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${budgetEnabled ? 'translate-x-6' : ''}`}></div>
+                     </button>
+                 </div>
+
+                 {budgetEnabled && (
+                    <div className="animate-in fade-in slide-in-from-top-2">
+                        <label className="text-xs font-bold text-gray-500 mb-1 block">Batas Maksimal (Rp)</label>
+                        <input 
+                            type="number" 
+                            value={budgetLimit}
+                            onChange={(e) => setBudgetLimit(e.target.value)}
+                            className="w-full p-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-primary outline-none"
+                        />
+                    </div>
+                 )}
+
+                 <button 
+                    type="submit" 
+                    className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white dark:text-slate-900 text-white py-2.5 rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
+                >
+                    <Check size={16} /> Simpan Budget
+                 </button>
+             </form>
+          </div>
+
           {/* Theme Toggle */}
           <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm flex justify-between items-center">
               <div className="flex items-center gap-3">

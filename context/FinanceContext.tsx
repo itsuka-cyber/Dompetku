@@ -37,7 +37,7 @@ const initialState: AppState = {
   transactions: [],
   categories: defaultCategories,
   goals: [],
-  budget: { limit: 5000000, enabled: true },
+  budget: { limit: 300000, enabled: true },
   isOnboarded: false,
   darkMode: false,
   userName: '',
@@ -100,7 +100,7 @@ const financeReducer = (state: AppState, action: AppAction): AppState => {
         }
     }
     case 'SET_BUDGET':
-        return { ...state, budget: { ...state.budget, limit: action.payload } };
+        return { ...state, budget: action.payload };
     case 'ADD_CATEGORY':
         return { ...state, categories: [...state.categories, action.payload] };
     default:

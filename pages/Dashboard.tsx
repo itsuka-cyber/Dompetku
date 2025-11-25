@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useFinance, getCategoryIcon } from '../context/FinanceContext';
 import { useToast } from '../context/ToastContext';
-import { ArrowUpCircle, ArrowDownCircle, Wallet, PiggyBank, Plus, ArrowRight, MoreHorizontal } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowUpCircle, ArrowDownCircle, Wallet, PiggyBank, Plus, ArrowRight, MoreHorizontal, Settings } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const Dashboard = () => {
   const { state, formatRupiah, dispatch } = useFinance();
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [transferAmount, setTransferAmount] = useState('');
   const [showTransfer, setShowTransfer] = useState(false);
 
@@ -17,7 +18,7 @@ const Dashboard = () => {
     .filter(t => t.type === 'expense' && new Date(t.date).getMonth() === currentMonth)
     .reduce((sum, t) => sum + t.amount, 0);
   
-  const budgetProgress = Math.min((monthlyExpenses / state.budget.limit) * 100, 100);
+  const budgetProgress = state.budget.limit > 0 ? Math.min((monthlyExpenses / state.budget.limit) * 100, 100) : 0;
 
   // Data for mini pie chart
   const expenseCategories = state.categories.filter(c => c.type === 'expense');
@@ -96,23 +97,37 @@ const Dashboard = () => {
       )}
 
       {/* Budget Stats */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 relative">
         <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold text-gray-900 dark:text-white">Budget Bulanan</h3>
-            <span className="text-xs text-gray-500">{Math.round(budgetProgress)}% terpakai</span>
+            <span className="text-xs text-gray-500">
+                {state.budget.enabled ? `${Math.round(budgetProgress)}% terpakai` : 'Tidak Aktif'}
+            </span>
         </div>
-        <div className="h-3 w-full bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
-            <div 
-                className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                    budgetProgress > 90 ? 'bg-red-500' : budgetProgress > 75 ? 'bg-orange-500' : 'bg-primary'
-                }`}
-                style={{ width: `${budgetProgress}%` }}
-            ></div>
-        </div>
-        <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400">
-            <span>Terpakai: {formatRupiah(monthlyExpenses)}</span>
-            <span>Limit: {formatRupiah(state.budget.limit)}</span>
-        </div>
+        
+        {state.budget.enabled ? (
+            <>
+                <div className="h-3 w-full bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
+                    <div 
+                        className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                            budgetProgress > 90 ? 'bg-red-500' : budgetProgress > 75 ? 'bg-orange-500' : 'bg-primary'
+                        }`}
+                        style={{ width: `${budgetProgress}%` }}
+                    ></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 dark:text-slate-400">
+                    <span>Terpakai: {formatRupiah(monthlyExpenses)}</span>
+                    <span>Limit: {formatRupiah(state.budget.limit)}</span>
+                </div>
+            </>
+        ) : (
+            <div className="flex justify-between items-center">
+                 <p className="text-xs text-gray-500 dark:text-slate-400">Total Pengeluaran: <span className="font-semibold text-gray-800 dark:text-white">{formatRupiah(monthlyExpenses)}</span></p>
+                 <button onClick={() => navigate('/settings')} className="text-xs text-primary font-medium flex items-center gap-1">
+                     <Settings size={12} /> Atur Budget
+                 </button>
+            </div>
+        )}
       </div>
 
       {/* Quick Actions & Goals Preview */}
